@@ -115,6 +115,7 @@ public class InsertCoffeeServlet_JSONArray extends HttpServlet {
 			}
 	    }
     	
+	    System.out.println("v3")
     	return true;
     }
 
