@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert Coffee</title>
+</head>
+<body>
+	<!-- I.欄位值個別傳送 -->
+	<form action="InsertCoffeeServlet" method="post">
+		咖啡名稱:<input type="text" name="coffee" value="Brown"/><br/>
+		供應商:<input type="text" name="supplier" value="49"/><br/>
+		價格:<input type="text" name="price" value="30"/><br/>
+		售價:<input type="text" name="sales" value="200"/><br/>
+	    總量:<input type="text" name="total" value="10"/><br/>
+		<input type="submit" value="Send"/>
+    </form>
+	<p/>
+    <!-- II.欄位值s 包成 JSON Object 傳送 -->
+   	咖啡名稱:<input type="text" id="COF_NAME" value="Extra Espresso"/><br/>
+	供應商:<input type="text" id="SUP_ID" value="49"/><br/>
+	價格:<input type="text" id="PRICE" value="30"/><br/>
+	售價:<input type="text" id="SALES" value="200"/><br/>
+    總量:<input type="text" id="TOTAL" value="10"/><br/>
+    <form action="InsertCoffeeServlet_JSON" method="post" onsubmit="return check()">
+    	<input type="hidden" name="coffeeJSON" id="coffeeJSON"/>
+        <input type="submit" value="Send" /> <!--   與 onsubmit="return check()" 都可送出 -->
+    </form>
+    <p/>
+    <!-- III.一次新增多筆 JSON Object Array 傳送 -->
+   	咖啡名稱:<input type="text" id="COF_NAME_" value="Extra Espresso"/><br/>
+	供應商:<input type="text" id="SUP_ID_" value="49"/><br/>
+	價格:<input type="text" id="PRICE_" value="30"/><br/>
+	售價:<input type="text" id="SALES_" value="200"/><br/>
+    總量:<input type="text" id="TOTAL_" value="10"/><br/>
+	<button onclick="add()">Add</button>   
+    <form action="InsertCoffeeServlet_JSONArray" method="post" onsubmit="return check_Array()">
+    	<input type="hidden" name="coffeeJSONArray" id="coffeeJSONArray"/>
+        <input type="submit" value="Send" />
+    </form>
+    <p/>
+    <!-- IV.JSON Object Array 傳送 w/ jQuery (不跳頁)-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   	咖啡名稱:<input type="text" id="COF_NAME_jQurey" value="Extra Espresso"/><br/>
+	供應商:<input type="text" id="SUP_ID_jQurey" value="49"/><br/>
+	價格:<input type="text" id="PRICE_jQurey" value="30"/><br/>
+	售價:<input type="text" id="SALES_jQurey" value="200"/><br/>
+    總量:<input type="text" id="TOTAL_jQurey" value="10"/><br/>
+	<button onclick="add_jQuery()">Add</button>
+	<button onclick="send_jQurey()">Send</button>
+	<button onclick="select_jQurey()">Query</button>
+	<div id="display"></id>
+    
+    
+     
+   	<!-- II.欄位值s 包成 JSON Object 傳送 -->
+   	<script>
+   	function check(){
+       	var obj = new Object();
+       	obj.COF_NAME = document.getElementById("COF_NAME").value;
+       	obj.SUP_ID = parseInt(document.getElementById("SUP_ID").value);
+       	obj.PRICE = parseFloat(document.getElementById("PRICE").value);
+       	obj.SALES = parseInt(document.getElementById("SALES").value);
+       	obj.TOTAL = parseInt(document.getElementById("TOTAL").value);
+       	
+       	var st = JSON.stringify(obj);
+       	alert(st);
+       	document.getElementById("coffeeJSON").value = st;
+       	
+       	return true;
+       }
+    	
+   	<!-- III.JSON Object Array 傳送 -->
+   	var data = [];
+   	function add(){
+   		var obj = new Object();
+       	obj.COF_NAME = document.getElementById("COF_NAME_").value;
+       	obj.SUP_ID = parseInt(document.getElementById("SUP_ID_").value);
+       	obj.PRICE = parseFloat(document.getElementById("PRICE_").value);
+       	obj.SALES = parseInt(document.getElementById("SALES_").value);
+       	obj.TOTAL = parseInt(document.getElementById("TOTAL_").value);
+       	data.push(obj);
+       	alert("obj added");	
+   	}
+   	function check_Array(){
+   		if(data.length > 0){
+   			var st = JSON.stringify(data);
+   			document.getElementById("coffeeJSONArray").value = st;
+   			alert(st);
+   			return true
+   		} else{
+   			alert("No data");
+   			return false;
+   		}
+   	}
+   	</script>
+   	
+   	<!-- IV.JSON Object Array 傳送 w/ jQuery (不跳頁) -->
+   	<script>
+   	var data_jQuery = [];
+   	function add_jQuery(){
+   		var obj = new Object();
+       	obj.COF_NAME = document.getElementById("COF_NAME_jQurey").value;
+       	obj.SUP_ID = parseInt(document.getElementById("SUP_ID_jQurey").value);
+       	obj.PRICE = parseFloat(document.getElementById("PRICE_jQurey").value);
+       	obj.SALES = parseInt(document.getElementById("SALES_jQurey").value);
+       	obj.TOTAL = parseInt(document.getElementById("TOTAL_jQurey").value);
+       	data_jQuery.push(obj);
+       	alert("obj added");	
+   	}
+   	</script>
+   	<script>
+   	function send_jQurey(){
+		var st = JSON.stringify(data_jQuery);
+		//alert(st);
+		$.ajax("InsertCoffeeServlet_JSONArrayjQuery",{
+			type: "post", //傳送方式
+			data: st, //data內容
+	  		contentType: "json"			
+			dataType: "html", //預期從server接收的資料型態				
+			success: result , //若成功則執行function result()  
+		    error: function (data, status, errormsg) {
+		        $("#display").html(errormsg);			        
+		    } //若失敗則執行匿名function
+		});
+   	}
+   	function result(data, status){
+		alert(status);
+		$("#display").html(data);
+	}
+   	function select_jQurey(){
+   		$.get("SelectCoffeeServlet_ListMap", result);
+   	}
+	</script>
+</body>
+</html>

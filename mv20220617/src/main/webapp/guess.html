@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Guess main Page</title>
+</head>
+<body>
+	<!-- a. w/o jQuery, 跳到頁面/Fortune.jsp-->
+	<form action="Fortune.jsp" method="post">
+		猜一個數字(1-10) <br/>
+		<input type="text" name="number"   value="6"/><br/>
+    	<input type="submit"  name="submit" value="Guess" />
+	</form>
+	<p>
+	
+	<!-- b. w/ jQuery, 不跳頁面(傳回Fortune.jsp內的text) -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	猜一個數字(1-10) <br/>
+    <input type="text" id="number" value="6"/><br/>
+    <input type="button"  id="submit" value="Guess" />
+	<div id="display"></div>
+	<script>
+		//4.顯示從Fortune.jsp的response
+		function result(data, status){
+			alert(status);
+			$("#display").html(data);
+		}
+	
+		//3.取得頁面的輸入 用request送到後端執行Fortune.jsp 回傳的資料由function result()接收
+		function send(){
+			var n=$("#number").val(); 
+			
+			//傳送二種.a
+			//$.post("Fortune.jsp", {"number":n}, result) //$.post("*.jsp", {JSON Object}, 把回傳結果傳給function result())
+			//傳送二種.b, 詳細定義傳送接收的資料型態
+			$.ajax("Fortune.jsp",{					
+ 				type: "post", //傳送方式
+ 				data: {"number":n}, //data內容
+ 		  		contentType: "application/x-www-form-urlencoded",  //client端(browser)送到server端的資料型態, 此值為預設				
+ 				dataType: "html" , //預期從server接收的資料型態				
+ 				success: result , //若成功則執行function result()  
+ 			    error: function (data, status, errormsg) {
+ 			        $("#display").html(errormsg);			        
+ 			    } //若失敗則執行匿名function
+ 			});
+		}
+		//2.按下submit 執行 send()
+		function start(){
+	    	$("#submit").click(send);
+	    }
+		//1.頁面載入 執行function start() {}
+		$(document).ready(start);
+		
+	   
+	</script>
+     
+</body>
+</html>
